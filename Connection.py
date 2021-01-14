@@ -2,7 +2,6 @@ import socket
 import json
 import time
 from json.decoder import JSONDecodeError
-from pixycam import *
 TCP_IP = 'raspberrypi.local'
 TCP_PORT = 55000
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response

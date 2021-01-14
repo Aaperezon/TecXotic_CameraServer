@@ -1,7 +1,6 @@
 from __future__ import print_function
-from pixyModules import pixy
+import pixy
 from ctypes import *
-from pixyModules import *
 # Pixy2 Python SWIG Set Lamp Example #
 
 print("Pixy2 Python SWIG Example -- Set Lamp")
