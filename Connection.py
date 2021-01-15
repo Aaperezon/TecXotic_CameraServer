@@ -12,34 +12,53 @@ s.listen(1)
 
 conectionAllowed = False
 receivedData = ''
-def ConnectTo():
-    global s,conn,conectionAllowed
-    conn, addr = s.accept()
-    print ('Connection address:', addr)
-    conectionAllowed = True
 
+conn = None
+addr = None
+def ConnectTo():
+	global conn,addr,conectionAllowed
+	conn, addr = s.accept()
+	print ('Connection address:', addr)
+	conectionAllowed = True
+	print ("Connection success...")
 def Receive():
-    global conn,conectionAllowed,receivedData
-    if(conectionAllowed == True):
-        received = conn.recv(BUFFER_SIZE)
-        if not received: 
-            print("Error de datos")
-            conn.close()
-            conectionAllowed = False
-        try:
-            #All my logic and implementations here
-            received = received.decode("utf-8")
-            received = "{}".format(received)
-            received = json.loads(received)
-            receivedData = received
-            return True
-            #PixyLamp(received["pixyLight"])
-        except:
-            #conn.close()
-            pass
-       
-    else:
-        ConnectTo()
+	global conectionAllowed,receivedData
+	if(conectionAllowed == True):
+		received = conn.recv(BUFFER_SIZE)
+		if not received: 
+			print("Error de datos")
+			conn.close()
+			conectionAllowed = False
+		try:
+			#Decodification here
+			received = received.decode("utf-8")
+			received = "{}".format(received)
+			received = json.loads(received)
+			receivedData = received
+			return True
+		except:
+			#conn.close()
+			pass
+	else:
+		print("Waiting for client...")
+		ConnectTo()
+	
+def CloseConnection():
+	try:
+		conn.close()
+	except Exception as e: 
+		print(e)
+
+	print("Closed connection...")
+
+def Send(data):
+	if(conectionAllowed == True):
+		try:
+			conn.sendall(data)
+		except Exception as e:
+			print(e)	
+
+
 
 
 def GetReceivedData():
