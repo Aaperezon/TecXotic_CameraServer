@@ -1,8 +1,8 @@
 import socket
 import json
 import time
-from json.decoder import JSONDecodeError
-TCP_IP = 'raspberrypi.local'
+
+TCP_IP = '192.168.2.2'
 TCP_PORT = 55000
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
@@ -11,7 +11,7 @@ s.bind((TCP_IP, TCP_PORT))
 s.listen(1)
 
 conectionAllowed = False
-receivedData = ''
+
 
 conn = None
 addr = None
@@ -34,8 +34,7 @@ def Receive():
 			received = received.decode("utf-8")
 			received = "{}".format(received)
 			received = json.loads(received)
-			receivedData = received
-			return True
+			return received
 		except:
 			#conn.close()
 			pass
@@ -57,10 +56,3 @@ def Send(data):
 			conn.sendall(data)
 		except Exception as e:
 			print(e)	
-
-
-
-
-def GetReceivedData():
-    global receivedData
-    return receivedData
