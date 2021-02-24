@@ -1,8 +1,8 @@
 from ConnectionUI import *
 from ConnectionPixhawk import *
 from ManualControl import *
+from Pixycam import *
 
-#from pixycam import *
 
 
 master = ConnectToPixhawk()
@@ -20,7 +20,12 @@ def Run():
 		print(str(commands))
 		
 		Control(commands)
-		Send(b"Hola esta es una prueba")
+		
+		#send = """{"target_x":0, "target_y":0, "target_width":30, "target_height":100}"""
+		send = GetPixyTarget()
+		print(send)		
+
+		Send(bytearray(send))
 			
 		#PixyLamp(command['pixyLight'])
 
