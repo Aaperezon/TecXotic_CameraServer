@@ -1,7 +1,7 @@
 
 armOn = False
 armOff = False
-arm_disarm_changer = False
+
 
 
 def Move(master, roll, pitch, yaw, thrust, buttons):
@@ -15,13 +15,21 @@ def Move(master, roll, pitch, yaw, thrust, buttons):
 
 
 def Arm_Disarm(master, stateBtn):
-	global arm_disarm_changer
-	if(arm_disarm_changer == True and stateBtn == True):
-		master.arducopter_arm()
-		arm_disarm_changer = False
-	elif(arm_disarm_changer == False and stateBtn == False):
-		master.arducopter_disarm()
-		arm_disarm_changer = True
+	global armOn, armOff
+	if(armOn):
+		master.arducopter_arm()	
+	else:
+		master.arducopter_disarm()	
+	
+	if(stateBtn == True):
+		if(not armOff):
+			armOn = (not armOn)
+			armOff = True
+	else:
+		armOff = False
+	print("Armed: "+str(bool(master.motors_armed()))+"  Boolean: "+str(bool(armOn))y
+   )
+	return master
 
 
 def ChangeFlightMode(master, mode):

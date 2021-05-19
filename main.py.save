@@ -7,20 +7,30 @@ from ManualControl import *
 
 master = ConnectToPixhawk()
 
+arm_disarm = False
+
+
+
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode):
-	Arm_Disarm(master, arm_disarm)
+	global master
+	master = Arm_Disarm(master, arm_disarm)
 	Move(master, roll, pitch, yaw, throttle, 0)
 	ChangeFlightMode(master, flight_mode)
 	
 
 def Run():
+	global arm_disarm, master
 	commands = Receive()
-	master.recv_match()
 	if(commands != None):
-		print(str(commands))
-		
-		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'])
-		#PixyLamp(commands['pixyLight']
+		#print(str(commands))
+		msg = master.recv_match()
+    		if not msg:
+        		pass
+    		if msg.get_type() == 'HEARTBEAT':
+        		print("\n\n*****Got message: %s*****" % msg.get_type())
+        		print("Message: %s" % msg)
+        		print("\nAs dictionary: %s" % msg.to_dict())
+        		# Armed = MAV_STATE_STANDBY (4), Disarmed = MAV_STATE_ACTIVE (3)
 
 		send = {
 			"arm_disarm":master.motors_armed(), 
@@ -35,8 +45,8 @@ def Run():
 		       }
 		send = json.dumps(send)
 		send = str(send)
-		#print(str(bool(master.motors_armed())))
 		#print(send)
+		#print(master.motors_armed())
 		#send = GetPixyTarget()
 		
 
