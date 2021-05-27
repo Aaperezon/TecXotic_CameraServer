@@ -3,7 +3,7 @@ from ConnectionPixhawk import *
 from ManualControl import *
 from MainCameraServo import *
 from ManualControlMiniROV import *
-
+from CameraStream import *
 indicator_pixhawk = False
 indicator_pitch_camera=0
 
@@ -11,9 +11,11 @@ indicator_pitch_camera=0
 pixhawk_status = False
 pixhawkWarning = False
 master = None
+camera1 = CameraStream('0')
+camera1.Run()
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk):
 	global indicator_pixhawk, pixhawkWarning, master
-	if(master != None):
+	if(master != None)
 		master.recv_match()
 		Arm_Disarm(master, arm_disarm)
 		Move(master, roll, pitch, yaw, throttle, 0)
@@ -44,8 +46,8 @@ def Run():
 		send = {
 				"connection_pixhawk": indicator_pixhawk,
 				"pitch_camera" : indicator_pitch_camera,
-				"pressure":0, 
-		        "clamp": False,
+				"pressure":0,
+	        		"clamp": False,
 				"light": False,
 				"throttle":commands['throttle'],
 				"roll":commands['roll'],

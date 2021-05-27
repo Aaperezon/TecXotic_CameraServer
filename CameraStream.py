@@ -1,27 +1,69 @@
 from threading import Thread
 from time import sleep
 import gi
-
+import sys
+import json
+import os.path
 gi.require_version("Gst","1.0")
 from gi.repository import Gst, GLib
 
+class CameraStream:
+	def __init__(self,camera_index):
+		self.camera_index = camera_index 
+		self.camera_port = None
+		Gst.init()
+		self.main_loop = GLib.MainLoop()
+		self.main_loop_thread = Thread(target=self.main_loop.run)
+		self.pipeline = ""
+	def SaveCameraPort(self,new_port):
+		camera_settings_read_file = open('./Source/CameraSettings.json', "r")
+		camera_settings_read = json.loads(camera_settings_read_file.read())
+		camera_settings_read_file.close()
+		camera_settings_read[str(self.camera_index)] = new_port
+		camera_settings_write_file = open('./Source/CameraSettings.json',"w")
+		json.dump(camera_settings_read, camera_settings_write_file)
+		camera_settings_write_file.close()
+		self.camera_port = new_port
+		self.EndStream()
+		self.Run()
+	def LoadCameraPort(self):
+		PATH = ("./Source/CameraSettings.json")
+		if not os.path.isfile(PATH):
+			DEFAULT_DATA = {
+				'0': 5656,
+				'1': 5657
+			}
+			os.makedirs(os.path.dirname(PATH))
+			DEFAULT_FILE = open(PATH, 'w')
+			json.dump(DEFAULT_DATA, DEFAULT_FILE)
+			self.camera_port = DEFAULT_DATA[self.camera_index]
+			return self.camera_port
+		else:
+			camera_settings_file = open (PATH, 'r')
+			camera_settings = json.loads(camera_settings_file.read())
+			self.camera_port = camera_settings[str(self.camera_index)]
+			return self.camera_port
+	def Run(self):
+		self.LoadCameraPort()
+		Gst.init()
+		self.main_loop = GLib.MainLoop()
+		self.main_loop_thread = Thread(target=self.main_loop.run)
+		self.main_loop_thread.start()
+		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" do-timestamp=true ! queue ! h264parse ! rtph264pay config-interval=10 pt=96 ! udpsink host=192.168.2.1 port="+str(self.camera_port))
+		
+		self.pipeline.set_state(Gst.State.PLAYING)
+		print(f"new stream is video{self.camera_index} on: {self.camera_port}")
+		
+	def EndStream(self):
+		self.pipeline.set_state(Gst.State.NULL)
+		self.main_loop.quit()
+		self.main_loop_thread.join()
 
-Gst.init()
-
-main_loop = GLib.MainLoop()
-main_loop_thread = Thread(target=main_loop.run)
-main_loop_thread.start()
-
-pipeline = Gst.parse_launch("v4l2src device=/dev/video0 do-timestamp=true ! queue ! h264parse ! rtph264pay config-interval=10 pt=96 ! udpsink host=192.168.2.1 port=5656")
-
-pipeline.set_state(Gst.State.PLAYING)
-
+camera1 = CameraStream('0')
 try:
+	camera1.Run()
 	while True:
-		sleep(.1)
+		new_port = int(input("new port: "))
+		camera1.SaveCameraPort(new_port)
 except KeyboardInterrupt:
-	pass
-
-pipeline.set_state(Gst.State.NULL)
-main_loop.quit()
-main_loop_thread.join()
+	camera1.EndStream()
