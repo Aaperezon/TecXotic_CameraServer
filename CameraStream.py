@@ -9,13 +9,15 @@ from gi.repository import Gst, GLib
 
 class CameraStream:
 	def __init__(self,camera_index):
-		self.camera_index = camera_index 
+		self.camera_index = camera_index
 		self.camera_port = None
 		Gst.init()
 		self.main_loop = GLib.MainLoop()
 		self.main_loop_thread = Thread(target=self.main_loop.run)
 		self.pipeline = ""
 	def SaveCameraPort(self,new_port):
+		if self.camera_port == new_port:
+			return
 		camera_settings_read_file = open('./Source/CameraSettings.json', "r")
 		camera_settings_read = json.loads(camera_settings_read_file.read())
 		camera_settings_read_file.close()
@@ -49,7 +51,7 @@ class CameraStream:
 		self.main_loop = GLib.MainLoop()
 		self.main_loop_thread = Thread(target=self.main_loop.run)
 		self.main_loop_thread.start()
-		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" do-timestamp=true ! queue ! h264parse ! rtph264pay config-interval=10 pt=96 ! udpsink host=192.168.2.1 port="+str(self.camera_port))
+		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" ! video/x-raw,width=640,height=480 !  jpegenc !  rtpjpegpay !  udpsink host=192.168.2.1 port="+str(self.camera_port))
 		
 		self.pipeline.set_state(Gst.State.PLAYING)
 		print(f"new stream is video{self.camera_index} on: {self.camera_port}")
