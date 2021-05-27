@@ -11,9 +11,8 @@ class CameraStream:
 	def __init__(self,camera_index):
 		self.camera_index = camera_index
 		self.camera_port = None
-		Gst.init()
-		self.main_loop = GLib.MainLoop()
-		self.main_loop_thread = Thread(target=self.main_loop.run)
+		self.main_loop = None
+		self.main_loop_thread = None
 		self.pipeline = ""
 	def SaveCameraPort(self,new_port):
 		if self.camera_port == new_port:
@@ -33,9 +32,9 @@ class CameraStream:
 		if not os.path.isfile(PATH):
 			DEFAULT_DATA = {
 				'0': 5656,
-				'1': 5657
+				'2': 5657
 			}
-			os.makedirs(os.path.dirname(PATH))
+			os.makedirs(os.path.dirname(PATH), exist_ok=True)
 			DEFAULT_FILE = open(PATH, 'w')
 			json.dump(DEFAULT_DATA, DEFAULT_FILE)
 			self.camera_port = DEFAULT_DATA[self.camera_index]
@@ -52,20 +51,20 @@ class CameraStream:
 		self.main_loop_thread = Thread(target=self.main_loop.run)
 		self.main_loop_thread.start()
 		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" ! video/x-raw,width=640,height=480 !  jpegenc !  rtpjpegpay !  udpsink host=192.168.2.1 port="+str(self.camera_port))
-		
 		self.pipeline.set_state(Gst.State.PLAYING)
 		print(f"new stream is video{self.camera_index} on: {self.camera_port}")
-		
 	def EndStream(self):
 		self.pipeline.set_state(Gst.State.NULL)
 		self.main_loop.quit()
 		self.main_loop_thread.join()
-
-camera1 = CameraStream('0')
-try:
-	camera1.Run()
-	while True:
-		new_port = int(input("new port: "))
-		camera1.SaveCameraPort(new_port)
-except KeyboardInterrupt:
-	camera1.EndStream()
+if __name__ == "__main__":
+	camera1 = CameraStream('2')
+	camera2 = CameraStream('0')
+	try:
+		camera1.Run()
+		camera2.Run()
+		while True:
+			new_port = int(input("new port: "))
+			camera1.SaveCameraPort(new_port)
+	except KeyboardInterrupt:
+		camera1.EndStream()
