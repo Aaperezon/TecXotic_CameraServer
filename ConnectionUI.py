@@ -11,7 +11,6 @@ s.listen(1)
 
 conectionAllowed = False
 
-
 conn = None
 addr = None
 def ConnectTo():
@@ -20,8 +19,9 @@ def ConnectTo():
 	print ('Connection address:', addr)
 	conectionAllowed = True
 	print ("Connection success...")
+	
 def Receive():
-	global conectionAllowed,receivedData
+	global conectionAllowed, LEDSuccess,LEDPixhawkWarning,LEDClientWarning
 	if(conectionAllowed == True):
 		received = conn.recv(BUFFER_SIZE)
 		if not received: 

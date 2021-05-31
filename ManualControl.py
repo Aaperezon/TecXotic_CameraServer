@@ -1,6 +1,4 @@
 
-armOn = False
-armOff = False
 arm_disarm_changer = False
 
 

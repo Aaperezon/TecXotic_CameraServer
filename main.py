@@ -1,48 +1,61 @@
 from ConnectionUI import *
 from ConnectionPixhawk import *
 from ManualControl import *
-#from Pixycam import *
+from MainCameraServo import *
+from ManualControlMiniROV import *
+
+indicator_pixhawk = False
+indicator_pitch_camera=0
+
+
+pixhawk_status = False
+pixhawkWarning = False
+def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk):
+	global indicator_pixhawk, pixhawkWarning
+	master = ConnectDisconnectPixhawk(connect_pixhawk)
+	if(master != None):
+		master.recv_match()
+		Arm_Disarm(master, arm_disarm)
+		Move(master, roll, pitch, yaw, throttle, 0)
+		ChangeFlightMode(master, flight_mode)
+		indicator_pixhawk = True
+	else:
+		indicator_pixhawk = False
 
 
 
-master = ConnectToPixhawk()
-
-def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode):
-	Arm_Disarm(master, arm_disarm)
-	Move(master, roll, pitch, yaw, throttle, 0)
-	ChangeFlightMode(master, flight_mode)
-	
+def UtilityControl(pitch_camera,miniROV_direction):
+	global indicator_pitch_camera
+	indicator_pitch_camera = MoveMainCamera(pitch_camera)
+	MoveMiniROV(miniROV_direction)
 
 def Run():
+	global pixhawk_status
 	commands = Receive()
-	master.recv_match()
 	if(commands != None):
 		print(str(commands))
-		
-		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'])
-		#PixyLamp(commands['pixyLight']
+		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], commands['connect_pixhawk'])
+		UtilityControl(commands['pitch_camera'], commands['miniROV_direction'])
 
 		send = {
-			"arm_disarm":master.motors_armed(), 
-		        "flight_mode":master.flightmode, 
-     	 	        "pressure":0, 
+				"connection_pixhawk": indicator_pixhawk,
+				"pitch_camera" : indicator_pitch_camera,
+				"pressure":0, 
 		        "clamp": False,
-			"light": False,
-			"throttle":commands['throttle'],
-			"roll":commands['roll'],
-			"pitch":commands['pitch'],
-			"yaw":commands['yaw']
+				"light": False,
+				"throttle":commands['throttle'],
+				"roll":commands['roll'],
+				"pitch":commands['pitch'],
+				"yaw":commands['yaw']
 		       }
 		send = json.dumps(send)
 		send = str(send)
-		#print(str(bool(master.motors_armed())))
-		#print(send)
-		#send = GetPixyTarget()
-		
 
-		Send(bytearray(send))
+		Send(bytearray(send,'utf-8'))
 			
 		#PixyLamp(command['pixyLight'])
+	
+
 
 		
 

@@ -10,3 +10,16 @@ def ConnectToPixhawk():
 	# Wait a heartbeat before sending commands
 	master.wait_heartbeat()
 	return master
+
+
+
+connection_pixhawk_changer = False
+
+def ConnectDisconnectPixhawk(stateBtn):
+	global arm_disarm_changer
+	if(connection_pixhawk_changer == True and stateBtn == True):
+		arm_disarm_changer = False
+		return ConnectToPixhawk()
+	elif(connection_pixhawk_changer == False and stateBtn == False):
+		arm_disarm_changer = True
+		return None
