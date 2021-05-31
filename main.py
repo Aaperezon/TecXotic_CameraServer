@@ -17,7 +17,7 @@ def Run():
 	commands = Receive()
 	master.recv_match()
 	if(commands != None):
-		print(str(commands))
+		#print(str(commands))
 		
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'])
 		#PixyLamp(commands['pixyLight']
@@ -40,7 +40,7 @@ def Run():
 		#send = GetPixyTarget()
 		
 
-		Send(bytearray(send))
+		Send(bytearray(send,"UTF-8"))
 			
 		#PixyLamp(command['pixyLight'])
 
