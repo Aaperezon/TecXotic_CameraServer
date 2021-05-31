@@ -19,6 +19,8 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 		Move(master, roll, pitch, yaw, throttle, 0)
 		ChangeFlightMode(master, flight_mode)
 		indicator_pixhawk = True
+		master = ConnectDisconnectPixhawk(connect_pixhawk)
+
 	else:
 		indicator_pixhawk = False
 		master = ConnectDisconnectPixhawk(connect_pixhawk)

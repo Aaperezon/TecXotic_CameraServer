@@ -14,11 +14,16 @@ def ConnectToPixhawk():
 
 
 connection_pixhawk_changer = False
+masterReturn = None
 def ConnectDisconnectPixhawk(stateBtn):
 	global connection_pixhawk_changer, masterReturn
-	if(connection_pixhawk_changer == True and stateBtn == True):
+	if(connection_pixhawk_changer == True and stateBtn == True and masterReturn == None):
 		connection_pixhawk_changer = False
-		return ConnectToPixhawk()
-	elif(connection_pixhawk_changer == False and stateBtn == False):
+		masterReturn = ConnectToPixhawk()
+		return masterReturn
+	elif(connection_pixhawk_changer == False and stateBtn == False ):
 		connection_pixhawk_changer = True
-		return None
+		masterReturn = None
+		return masterReturn
+	else:
+		return masterReturn
