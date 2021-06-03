@@ -1,5 +1,4 @@
 import time
-from adafruit_blinka.board.raspberrypi.pico import LED
 import board
 import neopixel
 
@@ -15,7 +14,7 @@ num_pixels = 12
 ORDER = neopixel.GRB
 
 pixels = neopixel.NeoPixel(
-    pixel_pin, num_pixels, brightness=.004, auto_write=False, pixel_order=ORDER
+    pixel_pin, num_pixels, brightness=1, auto_write=False, pixel_order=ORDER
 )
 
 
