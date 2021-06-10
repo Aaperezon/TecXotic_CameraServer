@@ -1,1 +1,1 @@
-from RelayRGB import *
+from RelayLEDs import *
