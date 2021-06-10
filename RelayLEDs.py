@@ -66,23 +66,14 @@ def AssignThread(function):
 
 
 if __name__ == "__main__":
-        try:
-                while True:
-                        AssignThread(WarningConnectionUI)
-                        sleep(3)
-                        KillThread()
-                        print("iniciando segundo thread")
-                        AssignThread(WarningConnectionPixhawk)
-                        sleep(3)
-                        KillThread()
-
-
-                """
-                while True:
-                        r,g,b = input("color rgb :")
-                        r = bool(int(r))
-                        g = bool(int(g))
-                        b = bool(int(b))
-                        print(setColorRGB(r,g,b))
-                """
-        except Exception as e:
+	try:
+		while True:
+			AssignThread(WarningConnectionUI)
+			sleep(3)
+			KillThread()
+			print("iniciando segundo thread")
+			AssignThread(WarningConnectionPixhawk)
+			sleep(3)
+			KillThread()
+	except Exception as e:
+		pass
