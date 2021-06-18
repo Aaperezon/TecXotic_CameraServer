@@ -24,8 +24,8 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 	else:
 		indicator_pixhawk = False
 		master = ConnectDisconnectPixhawk(connect_pixhawk)
-		LightsManager.KillThread()
-		LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
+		#LightsManager.KillThread()
+		#LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
 
 
 def UtilityControl(pitch_camera,miniROV_direction):
