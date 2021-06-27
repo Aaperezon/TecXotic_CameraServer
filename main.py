@@ -60,7 +60,7 @@ def Run():
 		send = json.dumps(send)
 		send = str(send)
 		#print(commands['connect_pixhawk'],indicator_pixhawk)
-		print(send)
+		#print(send)
 		#Send(bytearray(send,'utf-8'))
 			
 		#PixyLamp(command['pixyLight'])
