@@ -1,6 +1,6 @@
 import socket
 import json
-#import  LightsManager
+import  LightsManager
 TCP_IP = '192.168.2.4'
 TCP_PORT = 55000
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
@@ -39,8 +39,8 @@ def Receive():
 			pass
 	else:
 		print("Waiting for client...")
-		#LightsManager.KillThread()
-		#LightsManager.AssignThread(LightsManager.WarningConnectionUI)
+		LightsManager.KillLightsThread()
+		LightsManager.AssignThread(LightsManager.WarningConnectionUI)
 		ConnectTo()
 	
 def CloseConnection():
