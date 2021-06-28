@@ -15,15 +15,20 @@ camera1 = CameraStream('0')
 camera2 = CameraStream('2')
 camera1.Run()
 camera2.Run()
-def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk):
+def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk, r_LED,g_LED,b_LED, light):
 	global indicator_pixhawk, pixhawkWarning, master
 	if(master != None):
 		master.recv_match()
 		Arm_Disarm(master, arm_disarm)
 		Move(master, roll, pitch, yaw, throttle, 0)
 		ChangeFlightMode(master, flight_mode)
-		indicator_pixhawk = True
 		master = ConnectDisconnectPixhawk(connect_pixhawk)
+		if (indicator_pixhawk == False):
+			LightsManager.KillLightsThread()
+			LightsManager.AssignThread(LightsManager.SuccessAllConnections)
+			indicator_pixhawk = True
+		else:
+			LightsManager.PutRGBColor(r_LED,g_LED,b_LED, light)
 
 	else:
 		indicator_pixhawk = False
@@ -43,7 +48,8 @@ def Run():
 	commands = Receive()
 	if(commands != None):
 		#print(str(commands))
-		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], commands['connect_pixhawk'])
+		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
+			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
 		UtilityControl(commands['pitch_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
 
 		send = {
@@ -61,7 +67,7 @@ def Run():
 		send = str(send)
 		#print(commands['connect_pixhawk'],indicator_pixhawk)
 		#print(send)
-		#Send(bytearray(send,'utf-8'))
+		Send(bytearray(send,'utf-8'))
 			
 		#PixyLamp(command['pixyLight'])
 	
