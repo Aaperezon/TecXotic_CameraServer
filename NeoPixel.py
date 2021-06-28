@@ -54,13 +54,13 @@ def SetColorRGB(r,g,b):
 	pixels.fill((r,g,b))
 
 def PutRGBColor(r,g,b,stateBtn):
-	if(stateBtn == True):
-		pixels.fill((r,g,b))
-		pixels.show()
-
-	elif(stateBtn == False):
-		pixels.fill((0,0,0))
-		pixels.show()
+	if(thread_warning == None):
+		if(stateBtn == True):
+			pixels.fill((r,g,b))
+			pixels.show()
+		elif(stateBtn == False):
+			pixels.fill((0,0,0))
+			pixels.show()
 
 def WarningConnectionPixhawk(stop):
 	while True:
@@ -73,14 +73,15 @@ def WarningConnectionPixhawk(stop):
 		if(end_thread == True):
 			break
 def SuccessAllConnections(stop):
+	global thread_warning
 	for i in range(3):
 		pixels.fill((0,255,0))
 		pixels.show()
 		sleep(.2) 
 		pixels.fill((0,0,0))
 		pixels.show()
-		sleep(.2) 
-	KillLightsThread
+		sleep(.2)
+	thread_warning = None
 def WarningConnectionUI(stop):
 	while True:
 		pixels.fill((255,0,0))

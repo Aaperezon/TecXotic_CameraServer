@@ -1,4 +1,3 @@
-
 from ConnectionUI import *
 from ConnectionPixhawk import *
 from ManualControl import *
@@ -28,7 +27,7 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 			LightsManager.KillLightsThread()
 			LightsManager.AssignThread(LightsManager.SuccessAllConnections)
 			indicator_pixhawk = True
-		else:
+		els
 			LightsManager.PutRGBColor(r_LED,g_LED,b_LED, light)
 
 	else:
@@ -102,6 +101,5 @@ if __name__ == "__main__":
 	except Exception as e:
 		camera1.EndStream()
 		camera2.EndStream()
-		LightsManager.KillLightsThread()
 		print(e)
 

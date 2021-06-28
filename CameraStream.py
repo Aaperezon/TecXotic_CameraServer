@@ -32,7 +32,8 @@ class CameraStream:
 		if not os.path.isfile(PATH):
 			DEFAULT_DATA = {
 				'0': 5656,
-				'2': 5657
+				'2': 5657,
+				'4': 9890
 			}
 			os.makedirs(os.path.dirname(PATH), exist_ok=True)
 			DEFAULT_FILE = open(PATH, 'w')
@@ -60,9 +61,11 @@ class CameraStream:
 if __name__ == "__main__":
 	camera1 = CameraStream('2')
 	camera2 = CameraStream('0')
+	camera3 = CameraStream('4')
 	try:
 		camera1.Run()
 		camera2.Run()
+		camera3.Run()
 		while True:
 			new_port = int(input("new port: "))
 			camera1.SaveCameraPort(new_port)
