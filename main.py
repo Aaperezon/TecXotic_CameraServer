@@ -1,8 +1,7 @@
-
 from ConnectionUI import *
 from ConnectionPixhawk import *
 from ManualControl import *
-from MainCameraServo import *
+from ServoManager import ServoManager
 from ManualControlMiniROV import *
 from CameraStream import *
 indicator_pixhawk = False
@@ -16,6 +15,8 @@ camera1 = CameraStream('0')
 camera2 = CameraStream('2')
 camera1.Run()
 camera2.Run()
+pitch_servo = ServoManager(17)
+yaw_servo = ServoManager(27)
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk, r_LED,g_LED,b_LED, light):
 	global indicator_pixhawk, pixhawkWarning, master
 	if(master != None):
@@ -35,12 +36,13 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 		indicator_pixhawk = False
 		master = ConnectDisconnectPixhawk(connect_pixhawk)
 		LightsManager.KillLightsThread()
-		LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
+		#LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
 
 
-def UtilityControl(instruction_camera,miniROV_direction,cam_port1, cam_port2):
+def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera
-	MoveMainCamera(instruction_camera,12)
+	pitch_servo.MoveServo(pitch_camera, 1)
+	yaw_servo.MoveServo(yaw_camera, 1)
 	#MoveMiniROV(miniROV_direction)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))
@@ -51,7 +53,7 @@ def Run():
 		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
-		UtilityControl(commands['pitch_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
+		UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
 
 		send = {
 				"connection_pixhawk": indicator_pixhawk,
