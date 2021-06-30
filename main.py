@@ -40,7 +40,7 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 
 def UtilityControl(pitch_camera,miniROV_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera
-	#indicator_pitch_camera = MoveMainCamera(pitch_camera)
+	indicator_pitch_camera = AssignThread(MoveMainCamera(pitch_camera))
 	#MoveMiniROV(miniROV_direction)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))

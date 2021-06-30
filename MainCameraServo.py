@@ -1,44 +1,37 @@
-import RPi.GPIO as GPIO
+from gpiozero import AngularServo
 from time import sleep
-pinOut = 5
+from threading import Thread
 
-MAXAngle = 160
-MINAngle = 20
-pitchAngle = 0
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pinOut, GPIO.OUT)
-pwm=GPIO.PWM(pinOut, 50)
-pwm.start(0)
+MAX_angle = 44
+MIN_angle = -42
+pitch_angle = MIN_angle
+pitch_servo = AngularServo(17, min_angle=MIN_angle, max_angle=MAX_angle)
 
-def SetAngle(pin, angle):
-	duty = angle / 18 + 2
-	GPIO.output(pin, True)
-	pwm.ChangeDutyCycle(duty)
-	sleep(.4)
-	GPIO.output(pin, False)
-	pwm.ChangeDutyCycle(0)
+thread_servo = None
+end_thread = False
+
+pitch_servo.angle = MIN_angle
 
 
+def MoveMainCamera(direction, speed):
+	global pitch_angle
+	if direction == 'u':
+		pitch_servo.angle = pitch_angle + speed
+	elif direction == 'd':
+		pitch_servo.angle = pitch_angle - speed
+	return pitch_servo.angle
 
-def MoveMainCamera(angle):
-	global pitchAngle
-	if(angle != pitchAngle):
-		if(angle >= MAXAngle):
-			SetAngle(pinOut, MAXAngle)
-		elif(angle <= MINAngle):
-			SetAngle(pinOut, MINAngle)
-		else:
-			SetAngle(pinOut, angle)
-	pitchAngle = angle
-	return pitchAngle
+
+def AssignThread(function,direction,speed):
+	global thread_servo
+	thread_servo = Thread(target=function, args = (direction,speed))
+	thread_servo.start()
 
 
 
 if __name__ == "__main__":
 	try:
-		SetAngle(pinOut,180) 
-		pwm.stop()
-		GPIO.cleanup()
+		AssignThread(MoveMainCamera,'u',10) 
 	except Exception as e:
 		print(e)
+
