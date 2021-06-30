@@ -38,9 +38,9 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 		LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
 
 
-def UtilityControl(pitch_camera,miniROV_direction,cam_port1, cam_port2):
+def UtilityControl(instruction_camera,miniROV_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera
-	indicator_pitch_camera = AssignThread(MoveMainCamera(pitch_camera))
+	MoveMainCamera(instruction_camera,12)
 	#MoveMiniROV(miniROV_direction)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))
@@ -48,7 +48,7 @@ def Run():
 	global pixhawk_status
 	commands = Receive()
 	if(commands != None):
-		#print(str(commands))
+		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
 		UtilityControl(commands['pitch_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])

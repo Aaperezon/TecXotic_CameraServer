@@ -1,37 +1,37 @@
-from gpiozero import AngularServo
-from time import sleep
-from threading import Thread
+from gpiozero import Servo,AngularServo
+from gpiozero.pins.pigpio import PiGPIOFactory
 
-MAX_angle = 44
-MIN_angle = -42
+factory = PiGPIOFactory()
+
+pitch_servo = Servo(17, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
+MAX_angle = 90
+MIN_angle = -90
 pitch_angle = MIN_angle
-pitch_servo = AngularServo(17, min_angle=MIN_angle, max_angle=MAX_angle)
-
 thread_servo = None
 end_thread = False
 
-pitch_servo.angle = MIN_angle
-
-
+def remap(x, in_min, in_max, out_min, out_max):
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+def SetAngle(servo, angle):
+        angle = remap(angle, MIN_angle, MAX_angle, -1, 1)
+        servo.value = angle
 def MoveMainCamera(direction, speed):
-	global pitch_angle
-	if direction == 'u':
-		pitch_servo.angle = pitch_angle + speed
-	elif direction == 'd':
-		pitch_servo.angle = pitch_angle - speed
-	return pitch_servo.angle
+        global pitch_angle
+        if direction == 'u' and pitch_angle < MAX_angle:
+                SetAngle(pitch_servo, pitch_angle + speed)
+                pitch_angle = pitch_angle + speed
+        elif direction == 'd' and pitch_angle > MIN_angle:
+                SetAngle(pitch_servo, pitch_angle - speed)
+                pitch_angle = pitch_angle - speed
 
-
-def AssignThread(function,direction,speed):
-	global thread_servo
-	thread_servo = Thread(target=function, args = (direction,speed))
-	thread_servo.start()
-
-
-
+def GetPitchAngle():
+        return pitch_angle
+SetAngle(pitch_servo,pitch_angle)
 if __name__ == "__main__":
 	try:
-		AssignThread(MoveMainCamera,'u',10) 
+		while True:
+			instruction = 'u'
+			MoveMainCamera(instruction,1)
+			print(GetPitchAngle())
 	except Exception as e:
 		print(e)
-
