@@ -1,13 +1,13 @@
 import RPi.GPIO as GPIO          
 from time import sleep
 
-in1 = 24
-in2 = 23
-in3 = 0
-in4 = 1
+in1 = 26
+in2 = 19
+in3 = 13
+in4 = 6
 
-en1 = 25
-en2 = 7
+en1 = 21
+en2 = 20
 temp1=1
 GPIO.setwarnings(False)
 

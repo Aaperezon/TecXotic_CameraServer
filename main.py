@@ -17,8 +17,9 @@ camera1.Run()
 camera2.Run()
 pitch_servo = ServoManager(17)
 yaw_servo = ServoManager(27)
+pixhawk_indicator_LED = True
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk, r_LED,g_LED,b_LED, light):
-	global indicator_pixhawk, pixhawkWarning, master
+	global indicator_pixhawk, pixhawkWarning, master, pixhawk_indicator_LED
 	if(master != None):
 		master.recv_match()
 		Arm_Disarm(master, arm_disarm)
@@ -31,13 +32,16 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 			indicator_pixhawk = True
 		else:
 			LightsManager.PutRGBColor(r_LED,g_LED,b_LED, light)
+			pixhawk_indicator_LED = True
 
 	else:
 		indicator_pixhawk = False
 		master = ConnectDisconnectPixhawk(connect_pixhawk)
-		LightsManager.KillLightsThread()
-		#LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
-
+		if pixhawk_indicator_LED == True:
+			LightsManager.KillLightsThread()
+			LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
+			pixhawk_indicator_LED = False
+		UI_indicator_LED = True
 
 def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera

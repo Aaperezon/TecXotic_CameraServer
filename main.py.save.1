@@ -1,7 +1,8 @@
+
 from ConnectionUI import *
 from ConnectionPixhawk import *
 from ManualControl import *
-from MainCameraServo import *
+from ServoManager
 from ManualControlMiniROV import *
 from CameraStream import *
 indicator_pixhawk = False
@@ -15,6 +16,7 @@ camera1 = CameraStream('0')
 camera2 = CameraStream('2')
 camera1.Run()
 camera2.Run()
+pitch_servo = ServoManager(17)
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk, r_LED,g_LED,b_LED, light):
 	global indicator_pixhawk, pixhawkWarning, master
 	if(master != None):
@@ -27,7 +29,7 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 			LightsManager.KillLightsThread()
 			LightsManager.AssignThread(LightsManager.SuccessAllConnections)
 			indicator_pixhawk = True
-		els
+		else:
 			LightsManager.PutRGBColor(r_LED,g_LED,b_LED, light)
 
 	else:
@@ -37,9 +39,9 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 		LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
 
 
-def UtilityControl(pitch_camera,miniROV_direction,cam_port1, cam_port2):
+def UtilityControl(instruction_camera,miniROV_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera
-	#indicator_pitch_camera = MoveMainCamera(pitch_camera)
+	pitch_servo.MoveServo(instruction_camera, 1)
 	#MoveMiniROV(miniROV_direction)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))
@@ -47,7 +49,7 @@ def Run():
 	global pixhawk_status
 	commands = Receive()
 	if(commands != None):
-		#print(str(commands))
+		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
 		UtilityControl(commands['pitch_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
@@ -101,5 +103,6 @@ if __name__ == "__main__":
 	except Exception as e:
 		camera1.EndStream()
 		camera2.EndStream()
+		LightsManager.KillLightsThread()
 		print(e)
 

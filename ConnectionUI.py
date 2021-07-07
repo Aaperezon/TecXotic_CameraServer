@@ -13,6 +13,9 @@ conectionAllowed = False
 
 conn = None
 addr = None
+
+UI_indicator_LED = False
+pixhawk_indicator_LED = False
 def ConnectTo():
 	global conn,addr,conectionAllowed
 	conn, addr = s.accept()
@@ -21,7 +24,7 @@ def ConnectTo():
 	print ("Connection success...")
 	
 def Receive():
-	global conectionAllowed, LEDSuccess,LEDPixhawkWarning,LEDClientWarning
+	global conectionAllowed, LEDSuccess,LEDPixhawkWarning,LEDClientWarning,UI_indicator_LED, pixhawk_indicator_LED
 	if(conectionAllowed == True):
 		received = conn.recv(BUFFER_SIZE)
 		if not received: 
@@ -39,8 +42,10 @@ def Receive():
 			pass
 	else:
 		print("Waiting for client...")
-		LightsManager.KillLightsThread()
-		LightsManager.AssignThread(LightsManager.WarningConnectionUI)
+		if UI_indicator_LED == True:
+			LightsManager.KillLightsThread()
+			LightsManager.AssignThread(LightsManager.WarningConnectionUI)
+			UI_indicator_LED = False
 		ConnectTo()
 	
 def CloseConnection():
