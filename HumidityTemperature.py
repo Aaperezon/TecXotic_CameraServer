@@ -1,24 +1,39 @@
 import board
 import Adafruit_DHT
+from threading import Thread
+import time
+temp = 0
+hum = 0
+pin = 25
 
-class HumidityTemperature:
-	def __init__(self, pin):
-		self.pin = pin
-		self.temp = 0
-		self.hum = 0
-	def GetData(self):
-		humidity, temperature = Adafruit_DHT.read(11, self.pin)
-		if humidity != None and temperature != None:
-			self.temp = temperature
-			self.hum = humidity
-		return self.hum, self.temp
+
+def GetHumidityTemperature():
+	global temp, hum
+	humidity, temperature = Adafruit_DHT.read(11, pin)
+	if humidity != None and temperature != None:
+		temp = temperature
+		hum = humidity
+	return hum, temp
+def Start():
+	while True:
+		print(f"LSKDNLNFNWFNWKEJNÑWJNDNCÑWJ NCÑWKJ DCÑKWJ CÑKWJECJNEÑWNWÑEN")
+		time.sleep(4)
+def StartThread():
+	thread = Thread(target = Start)
+	thread.start()
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
-	
-	sensor = HumidityTemperature(25)
+	#StartThread()
 	try:
 		while True:
-			temp, hum = sensor.GetData()
+			hum,temp = GetHumidityTemperature()
 			print(f"humedad: {temp} temperatura: {hum}")
 		
 	except Exception as e:
