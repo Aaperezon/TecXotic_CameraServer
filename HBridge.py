@@ -1,4 +1,3 @@
-
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -25,9 +24,24 @@ class HBridge:
 		GPIO.output(self.in2, GPIO.LOW)
 	
 if __name__ == "__main__":
-	motor1 = HBridge(19,13,26)
+	left_motor = HBridge(13,19,26)
+	right_motor = HBridge(16,20,21)
 	try:
 		while True:
-			motor1.Forward()
+			a = input("Instruction: ")
+			if a == "f":
+				left_motor.Forward()
+				right_motor_Forward()
+			elif a == "b":
+				left_motor.Backward()
+				right_motor.Backward()
+			elif a == "l":
+				left_motor.Stop()
+				right_motor.Forward()
+			elif a == "r":
+				left_motor.Forward()
+				right_motor.Stop()
+			else:
+				pass
 	except Exception as e:
 		print(e)
