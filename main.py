@@ -4,14 +4,13 @@ from ManualControl import *
 from ServoManager import ServoManager
 from ManualControlMiniROV import *
 from CameraStream import *
-from HumidityTemperature import GetHumidityTemperature
-import RelayLEDs
+#from HumidityTemperature import GetHumidityTemperature
+#import RelayLEDs
 indicator_pixhawk = False
 indicator_pitch_camera=0
 
 
 pixhawk_status = False
-pixhawkWarning = False
 master = None
 camera1 = CameraStream('0')
 camera2 = CameraStream('2')
@@ -19,8 +18,8 @@ camera1.Run()
 camera2.Run()
 pitch_servo = ServoManager(17)
 yaw_servo = ServoManager(27)
-pixhawk_indicator_LED = False
-blue_light = RelayLEDs.RelayManager(14)
+#pixhawk_indicator_LED = False
+#blue_light = RelayLEDs.RelayManager(14)
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk, r_LED,g_LED,b_LED, light):
 	global indicator_pixhawk, pixhawkWarning, master, pixhawk_indicator_LED
 	if(master != None):
@@ -32,28 +31,27 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 		ChangeFlightMode(master, flight_mode)
 		master = ConnectDisconnectPixhawk(connect_pixhawk)
 		if (indicator_pixhawk == False):
-			LightsManager.KillLightsThread()
-			LightsManager.AssignThread(LightsManager.SuccessAllConnections)
+			#LightsManager.KillLightsThread()
+			#LightsManager.AssignThread(LightsManager.SuccessAllConnections)
 			indicator_pixhawk = True
-		else:
-			LightsManager.PutRGBColor(r_LED,g_LED,b_LED, light)
-			pixhawk_indicator_LED = True
+		#else:
+			#LightsManager.PutRGBColor(r_LED,g_LED,b_LED, light)
+			#pixhawk_indicator_LED = True
 
 	else:
 		indicator_pixhawk = False
 		master = ConnectDisconnectPixhawk(connect_pixhawk)
-		if pixhawk_indicator_LED == False:
-			LightsManager.KillLightsThread()
-			LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
-			pixhawk_indicator_LED = True
-		UI_indicator_LED = True
+		#if pixhawk_indicator_LED == False:
+			#LightsManager.KillLightsThread()
+			#LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
+			#pixhawk_indicator_LED = True
 
-def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,cam_port1, cam_port2, relay_light):
+def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera
 	pitch_servo.MoveServo(pitch_camera, 1)
 	yaw_servo.MoveServo(yaw_camera, 1)
 	#MoveMiniROV(miniROV_direction)
-	blue_light.Switch(relay_light)
+	#blue_light.Switch(relay_light)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))
 def Run():
@@ -63,7 +61,7 @@ def Run():
 		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
-		UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'], commands['relay_light'])
+		UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
 		#hum, temp = GetHumidityTemperature()
 		hum, temp = (0,0)
 		send = {
@@ -84,12 +82,6 @@ def Run():
 		#print(commands['connect_pixhawk'],indicator_pixhawk)
 		#print(send)
 		Send(bytearray(send,'utf-8'))
-			
-		#PixyLamp(command['pixyLight'])
-	
-
-
-		
 
 
 
@@ -119,5 +111,5 @@ if __name__ == "__main__":
 		camera2.EndStream()
 		LightsManager.KillLightsThread()
 		print(e)
-		blue_light.Switch(0)
+		#blue_light.Switch(0)
 
