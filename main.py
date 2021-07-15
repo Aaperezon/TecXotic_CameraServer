@@ -50,7 +50,7 @@ def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,cam_port1, cam_port
 	global indicator_pitch_camera
 	pitch_servo.MoveServo(pitch_camera, 1)
 	yaw_servo.MoveServo(yaw_camera, 1)
-	#MoveMiniROV(miniROV_direction)
+	MoveMiniROV(miniROV_direction)
 	#blue_light.Switch(relay_light)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))
@@ -58,7 +58,7 @@ def Run():
 	global pixhawk_status
 	commands = Receive()
 	if(commands != None):
-		#print(str(commands))
+		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
 		UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 	except Exception as e:
 		camera1.EndStream()
 		camera2.EndStream()
-		LightsManager.KillLightsThread()
+		#LightsManager.KillLightsThread()
 		print(e)
 		#blue_light.Switch(0)
 

@@ -10,9 +10,10 @@ class HBridge:
 		GPIO.setup(self.in2, GPIO.OUT)
 		GPIO.setup(self.ena, GPIO.OUT)
 		GPIO.output(self.in1, GPIO.LOW)
-		motor = GPIO.PWM(ena,1000)
-		motor.start(0)
-		motor.ChangeDutyCycle(speed)
+		GPIO.output(self.in1, GPIO.LOW)
+		self.motor = GPIO.PWM(ena,1000)
+		self.motor.start(0)
+		self.motor.ChangeDutyCycle(speed)
 	def Forward(self):
 		GPIO.output(self.in1, GPIO.HIGH)
 		GPIO.output(self.in2, GPIO.LOW)
@@ -22,7 +23,8 @@ class HBridge:
 	def Stop(self):
 		GPIO.output(self.in1, GPIO.LOW)
 		GPIO.output(self.in2, GPIO.LOW)
-	
+	def SetSpeed(speed):
+		self.motor.ChangeDutyCycle(speed)
 if __name__ == "__main__":
 	left_motor = HBridge(13,19,26)
 	right_motor = HBridge(16,20,21)
@@ -31,7 +33,7 @@ if __name__ == "__main__":
 			a = input("Instruction: ")
 			if a == "f":
 				left_motor.Forward()
-				right_motor_Forward()
+				right_motor.Forward()
 			elif a == "b":
 				left_motor.Backward()
 				right_motor.Backward()

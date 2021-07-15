@@ -1,0 +1,16 @@
+import HBridge
+
+left_motor = HBridge.HBridge(13,19,26)
+right_motor = HBridge.HBridge(16,20,21)
+
+def MoveMiniROV(direction_left, direction_right):
+	if direction_left == True:
+		left_motor.Forward()
+	elif a == "b":
+		left_motor.
+	elif a == "l":
+		left_motor.Stop()
+		right_motor.Forward()
+	elif a == "r":
+		left_motor.Forward()
+		right_motor.Stop()
