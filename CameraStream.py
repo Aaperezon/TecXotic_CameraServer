@@ -61,11 +61,11 @@ class CameraStream:
 if __name__ == "__main__":
 	camera1 = CameraStream('2')
 	camera2 = CameraStream('0')
-	camera3 = CameraStream('4')
+	#camera3 = CameraStream('4')
 	try:
 		camera1.Run()
 		camera2.Run()
-		camera3.Run()
+		#camera3.Run()
 		while True:
 			new_port = int(input("new port: "))
 			camera1.SaveCameraPort(new_port)
