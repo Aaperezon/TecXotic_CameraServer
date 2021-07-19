@@ -1,6 +1,6 @@
 import cv2 as cv
 while True:
-	cap = cv.VideoCapture("udpsrc port=9520 ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! videoconvert ! appsink", cv.CAP_GSTREAMER)
+	cap = cv.VideoCapture("udpsrc port=9521 ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
 
 	if (cap.isOpened()== False):
 		print("Error opening video stream or file")

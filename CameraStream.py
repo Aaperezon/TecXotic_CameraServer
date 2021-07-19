@@ -51,7 +51,7 @@ class CameraStream:
 		self.main_loop = GLib.MainLoop()
 		self.main_loop_thread = Thread(target=self.main_loop.run)
 		self.main_loop_thread.start()
-		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" ! video/x-raw,width=320,height=240 ! queue ! jpegenc ! rtpjpegpay ! udpsink host=192.168.2.1 port="+str(self.camera_port))
+		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" ! video/x-raw,width=320,height=240 ! queue ! jpegenc ! rtpjpegpay ! multiudpsink clients=192.168.2.1:"+str(self.camera_port)+",192.168.2.2:"+str(self.camera_port+1))
 		self.pipeline.set_state(Gst.State.PLAYING)
 		print(f"new stream is video{self.camera_index} on: {self.camera_port}")
 	def EndStream(self):
@@ -60,11 +60,11 @@ class CameraStream:
 		self.main_loop_thread.join()
 if __name__ == "__main__":
 	camera1 = CameraStream('2')
-	camera2 = CameraStream('0')
+	#camera2 = CameraStream('0')
 	#camera3 = CameraStream('4')
 	try:
 		camera1.Run()
-		camera2.Run()
+		#camera2.Run()
 		#camera3.Run()
 		while True:
 			new_port = int(input("new port: "))
