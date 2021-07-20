@@ -4,7 +4,7 @@ from ManualControl import *
 from ServoManager import ServoManager
 from ManualControlMiniROV import *
 from CameraStream import *
-import Agent1Manager
+#import Agent1Manager
 #from HumidityTemperature import GetHumidityTemperature
 #import RelayLEDs
 indicator_pixhawk = False
@@ -17,8 +17,8 @@ camera1 = CameraStream('0')
 camera2 = CameraStream('2')
 camera1.Run()
 camera2.Run()
-pitch_servo = ServoManager(17)
-yaw_servo = ServoManager(27)
+pitch_servo = ServoManager(17, min_angle=-60, max_angle=20)
+yaw_servo = ServoManager(27, min_angle=-40, max_angle=40)
 setup = True
 #pixhawk_indicator_LED = False
 #blue_light = RelayLEDs.RelayManager(14)
@@ -61,9 +61,9 @@ def Run():
 	commands = Receive()
 	if(commands != None):
 		if setup == True:
-			Agent1Manager.setup(commands[''])
+			#Agent1Manager.setup(commands[''])
 			setup = False
-		Agent1Manager.Run(commands['activate_agent1'])
+		#Agent1Manager.Run(commands['activate_agent1'])
 		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])

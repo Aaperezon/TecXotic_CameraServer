@@ -5,10 +5,10 @@ factory = PiGPIOFactory()
 
 
 class ServoManager:
-	def __init__(self, pin_gpio):
+	def __init__(self, pin_gpio, min_angle=-90, max_angle=90):
 		self.servo = Servo(pin_gpio, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
-		self.MAX_angle = 90
-		self.MIN_angle = -90
+		self.MAX_angle = max_angle
+		self.MIN_angle = min_angle
 		self.angle = self.MIN_angle
 	def SetMaxAngle(self,new_max_angle):
 		self.MAX_angle = new_max_angle
