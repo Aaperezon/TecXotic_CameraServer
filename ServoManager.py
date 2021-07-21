@@ -30,11 +30,12 @@ class ServoManager:
 		return self.angle
 
 if __name__ == "__main__":
-	pitch_servo = ServoManager(17)
+	pitch_servo = ServoManager(27)
 	try:
 		while True:
-			instruction = 'u'
-			pitch_servo.MoveServo(instruction,1)
+			a  = int(input("angle: "))
+			#pitch_servo.MoveServo(instruction,1)
+			pitch_servo.SetAngle(a)
 			print(pitch_servo.GetAngle())
 	except Exception as e:
 		print(e)

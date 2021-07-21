@@ -4,7 +4,7 @@ from ManualControl import *
 from ServoManager import ServoManager
 from ManualControlMiniROV import *
 from CameraStream import *
-#import Agent1Manager
+import Agent1Manager
 #from HumidityTemperature import GetHumidityTemperature
 #import RelayLEDs
 indicator_pixhawk = False
@@ -17,9 +17,10 @@ camera1 = CameraStream('0')
 camera2 = CameraStream('2')
 camera1.Run()
 camera2.Run()
+
 pitch_servo = ServoManager(17, min_angle=-60, max_angle=20)
 yaw_servo = ServoManager(27, min_angle=-40, max_angle=40)
-setup = True
+setup = False
 #pixhawk_indicator_LED = False
 #blue_light = RelayLEDs.RelayManager(14)
 def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk, r_LED,g_LED,b_LED, light):
@@ -48,11 +49,12 @@ def Control(arm_disarm, roll, pitch, yaw, throttle, flight_mode, connect_pixhawk
 			#LightsManager.AssignThread(LightsManager.WarningConnectionPixhawk)
 			#pixhawk_indicator_LED = True
 
-def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,cam_port1, cam_port2):
+def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,reel_direction,cam_port1, cam_port2):
 	global indicator_pitch_camera
 	pitch_servo.MoveServo(pitch_camera, 1)
 	yaw_servo.MoveServo(yaw_camera, 1)
 	MoveMiniROV(miniROV_direction)
+	MoveReel(reel_direction)
 	#blue_light.Switch(relay_light)
 	camera1.SaveCameraPort(int(cam_port1))
 	camera2.SaveCameraPort(int(cam_port2))
@@ -60,14 +62,18 @@ def Run():
 	global pixhawk_status,setup
 	commands = Receive()
 	if(commands != None):
-		if setup == True:
-			#Agent1Manager.setup(commands[''])
+		if commands['agent1_activate'] == True and setup == False:
+			Agent1Manager.Intialize()
+			Agent1Manager.Setup(commands['kp_pitch'], commands['ki_pitch'],commands['kd_pitch'],0)
+			setup = True
+		elif commands['agent1_activate'] == False:
 			setup = False
-		#Agent1Manager.Run(commands['activate_agent1'])
+
+		Agent1Manager.Run(commands['activate_agent1'])
 		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
-		UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['cam_port1'],commands['cam_port2'])
+		UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['reel_direction'],commands['cam_port1'],commands['cam_port2'])
 		#hum, temp = GetHumidityTemperature()
 		hum, temp = (0,0)
 		send = {
