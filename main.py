@@ -14,9 +14,9 @@ indicator_pitch_camera=0
 pixhawk_status = False
 master = None
 camera1 = CameraStream('0')
-camera2 = CameraStream('2')
+#camera2 = CameraStream('2')
 camera1.Run()
-camera2.Run()
+#camera2.Run()
 
 pitch_servo = ServoManager(17, min_angle=-60, max_angle=20)
 yaw_servo = ServoManager(27, min_angle=-40, max_angle=40)
@@ -57,19 +57,18 @@ def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,reel_direction,cam_
 	MoveReel(reel_direction)
 	#blue_light.Switch(relay_light)
 	camera1.SaveCameraPort(int(cam_port1))
-	camera2.SaveCameraPort(int(cam_port2))
+	#camera2.SaveCameraPort(int(cam_port2))
 def Run():
 	global pixhawk_status,setup
 	commands = Receive()
 	if(commands != None):
-		if commands['agent1_activate'] == True and setup == False:
-			Agent1Manager.Intialize()
+		if commands['activate_agent1'] == True and setup == False:
 			Agent1Manager.Setup(commands['kp_pitch'], commands['ki_pitch'],commands['kd_pitch'],0)
 			setup = True
-		elif commands['agent1_activate'] == False:
+		elif commands['activate_agent1'] == False:
 			setup = False
 
-		Agent1Manager.Run(commands['activate_agent1'])
+		Agent1Manager.Run(commands['activate_agent1'], camera1.GetStream())
 		print(str(commands))
 		Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], 
 			commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light'])
@@ -120,7 +119,7 @@ if __name__ == "__main__":
 		CloseConnection()
 	except Exception as e:
 		camera1.EndStream()
-		camera2.EndStream()
+		#camera2.EndStream()
 		#LightsManager.KillLightsThread()
 		print(e)
 		#blue_light.Switch(0)
