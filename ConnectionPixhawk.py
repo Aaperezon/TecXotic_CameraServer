@@ -13,7 +13,7 @@ def ConnectToPixhawk():
 
 
 
-connection_pixhawk_changer = False
+connection_pixhawk_changer = True
 masterReturn = None
 def ConnectDisconnectPixhawk(stateBtn):
 	global connection_pixhawk_changer, masterReturn
@@ -27,3 +27,13 @@ def ConnectDisconnectPixhawk(stateBtn):
 		return masterReturn
 	else:
 		return masterReturn
+
+if __name__ == "__main__":
+	try:
+		#ConnectDisconnectPixhawk(False)
+		while True:
+			con = ConnectDisconnectPixhawk(True)
+			if con != None:
+				print("connected")
+	except Exception as e:
+                print(e)

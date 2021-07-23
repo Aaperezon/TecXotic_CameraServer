@@ -1,6 +1,6 @@
 import socket
 import json
-#import  LightsManager
+import  LightsManager
 TCP_IP = '192.168.2.2'
 TCP_PORT = 55000
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
@@ -15,7 +15,7 @@ conectionAllowed = False
 conn = None
 addr = None
 
-#UI_indicator_LED = False
+UI_indicator_LED = False
 def ConnectTo():
 	global conn,addr,conectionAllowed
 	conn, addr = s.accept()
@@ -24,7 +24,7 @@ def ConnectTo():
 	print ("Connection success...")
 	
 def Receive():
-	global conectionAllowed, LEDSuccess,LEDPixhawkWarning,LEDClientWarning,UI_indicator_LED, pixhawk_indicator_LED
+	global conectionAllowed,UI_indicator_LED
 	if(conectionAllowed == True):
 		received = conn.recv(BUFFER_SIZE)
 		if not received: 
@@ -33,7 +33,6 @@ def Receive():
 			conectionAllowed = False
 			UI_indicator_LED = False
 		try:
-			#Decodification here
 			received = received.decode("utf-8")
 			received = "{}".format(received)
 			received = json.loads(received)
@@ -43,10 +42,10 @@ def Receive():
 			pass
 	else:
 		print("Waiting for client...")
-		#if UI_indicator_LED == False:
-			#LightsManager.KillLightsThread()
-			#LightsManager.AssignThread(LightsManager.WarningConnectionUI)
-			#UI_indicator_LED = True
+		if UI_indicator_LED == False:
+			LightsManager.KillLightsThread()
+			LightsManager.AssignThread(LightsManager.WarningConnectionUI)
+			UI_indicator_LED = True
 		ConnectTo()
 	
 def CloseConnection():

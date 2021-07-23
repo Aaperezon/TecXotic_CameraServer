@@ -56,12 +56,12 @@ class CameraStream:
 		self.pipeline = Gst.parse_launch("v4l2src device=/dev/video"+str(self.camera_index)+" ! video/x-raw,width=320,height=240 ! queue ! jpegenc ! rtpjpegpay ! multiudpsink clients=192.168.2.1:"+str(self.camera_port)+",192.168.2.2:"+str(self.camera_port+1))
 		self.pipeline.set_state(Gst.State.PLAYING)
 		print(f"new stream is video{self.camera_index} on: {self.camera_port}")
-		self.cap = cv.VideoCapture("udpsrc port="+str(self.camera_port+1)+" ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
+		#self.cap = cv.VideoCapture("udpsrc port="+str(self.camera_port+1)+" ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
 
 	def GetStream(self):
 		return self.cap
 	def EndStream(self):
-		self.cap.release()
+		#self.cap.release()
 		self.pipeline.set_state(Gst.State.NULL)
 		self.main_loop.quit()
 		self.main_loop_thread.join()
