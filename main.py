@@ -13,10 +13,11 @@ indicator_pitch_camera=0
 pixhawk_status = False
 master = None
 camera1 = CameraStream('0')
-#camera2 = CameraStream('2')
+camera2 = CameraStream('2')
 camera1.Run()
-#camera2.Run()
+camera2.Run()
 camera1_image = camera1.GetStream()
+camera2_image = camera2.GetStream()
 pitch_servo = ServoManager(17, min_angle=-60, max_angle=20)
 yaw_servo = ServoManager(27, min_angle=-40, max_angle=40)
 setup = False
@@ -55,7 +56,7 @@ def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,reel_direction,cam_
 	MoveMiniROV(miniROV_direction)
 	MoveReel(reel_direction)
 	camera1.SaveCameraPort(int(cam_port1))
-	#camera2.SaveCameraPort(int(cam_port2))
+	camera2.SaveCameraPort(int(cam_port2))
 def Run():
 	global pixhawk_status,setup
 	commands = Receive()

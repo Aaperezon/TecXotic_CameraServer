@@ -34,6 +34,7 @@ class CameraStream:
 		if not os.path.isfile(PATH):
 			DEFAULT_DATA = {
 				'0': 5656,
+				'1': 5700,
 				'2': 5657,
 				'4': 9890
 			}

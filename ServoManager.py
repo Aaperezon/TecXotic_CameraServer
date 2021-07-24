@@ -30,7 +30,7 @@ class ServoManager:
 		return self.angle
 
 if __name__ == "__main__":
-	pitch_servo = ServoManager(27)
+	pitch_servo = ServoManager(27, -60, 60)
 	try:
 		while True:
 			a  = int(input("angle: "))
