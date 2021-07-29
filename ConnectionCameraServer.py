@@ -86,6 +86,6 @@ if __name__ == "__main__":
             Run()
     except KeyboardInterrupt:
         CloseConnection()
-    except Exception as e:
-        print(e)
+    #except Exception as e:
+        #print(e)
 
