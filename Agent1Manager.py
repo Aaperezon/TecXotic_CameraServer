@@ -77,8 +77,8 @@ def Start(activate, port):
     global cap
     if activate == True:
         if cap == None:
-            cap = cv.VideoCapture("udpsrc port="+str(port)+" ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
-      
+            #cap = cv.VideoCapture("udpsrc port="+str(port)+" ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
+            cap = cv.VideoCapture("prueba2.wmv")
         if cap.isOpened():
             ret,frame = cap.read()
             frame = cv.resize(frame, (320,240))
@@ -109,7 +109,8 @@ def Start(activate, port):
  
 if __name__ == "__main__":
     try:
-        cap = cv.VideoCapture(0)
+        cap = cv.VideoCapture("prueba2.wmv")
+
         #LightsManager.GetLight1().Switch(1)
         while True:
 	        if cap.isOpened():
@@ -123,4 +124,3 @@ if __name__ == "__main__":
     except:
 	    cap.release()
 	    cv.destroyAllWindows()
-	    camera.EndStream()

@@ -15,24 +15,25 @@ def Start(frame):
 
     cv.imshow("one channel",hsvImg)
 
-    #hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_OCEAN)
-    hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_HSV)
+    hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_OCEAN)
+    hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
     cv.imshow("ocean colormap",hsvImg)
     #hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
     #cv.imshow("color for mask",hsvImg)
 
-    color_low = np.array([0,0,10], np.uint8)
-    color_high = np.array([180,190,250], np.uint8)
-    hsvImg = cv.inRange(hsvImg, color_low,color_high)
-    cv.imshow("white mask",hsvImg)
-    kernel = np.ones((3,3), np.uint8)
-    hsvImg = cv.dilate(hsvImg, kernel, iterations=4)
-    cv.imshow("erode",hsvImg)
+    color_low = np.array([0,40,0], np.uint8)
+    color_high = np.array([180,85,255], np.uint8)
+    result = cv.inRange(hsvImg, color_low,color_high)
+    cv.imshow("first mask",result)
 
-    edged = cv.Canny(hsvImg,threshold1=0, threshold2=0)
+    kernel = np.ones((3,3), np.uint8)
+    result = cv.dilate(result, kernel, iterations=4)
+    cv.imshow("dilate",hsvImg)
+
+    edged = cv.Canny(result,threshold1=0, threshold2=0)
     cv.imshow("Edged",edged)
 
-    lines = cv.HoughLines(edged, rho=1, theta=np.pi/180, threshold=40, lines=None,srn=0,stn=0)
+    lines = cv.HoughLines(edged, rho=1, theta=np.pi/180, threshold=80, lines=None,srn=0,stn=0)
     line1 = None
     line2 = None
     if lines is not None:
@@ -81,7 +82,7 @@ def Start(frame):
                 cv.circle(frame,center,5,(255,255,255),4)
         if line1 != None and line2 != None:
                 yaw = int((line1[1] + line2[1])/2) #target is 90°
-                #pitch = constant slow
+                #pitch = 100 #constant slow
                 roll = 0 
                 throttle = 0
 
@@ -103,13 +104,14 @@ def Start(frame):
         print(f" throttle: {throttle}, roll: {roll}, pitch: constant, yaw: {yaw}")
 
     cv.imshow('lines',frame)
-    return throttle, roll, pitch, yaw
+    return throttle, roll, 100, yaw
 
 
 
  
 if __name__ == "__main__":
-    cap = cv.VideoCapture(2)
+    cap = cv.VideoCapture("prueba1.mp4")
+    #cap = cv.VideoCapture("prueba2.wmv")
     while True:
         if cap.isOpened():
             ret, frame = cap.read()
@@ -119,5 +121,3 @@ if __name__ == "__main__":
                 cap.release()
                 break
     cv.destroyAllWindows()
-
-

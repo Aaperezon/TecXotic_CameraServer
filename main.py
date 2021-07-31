@@ -76,7 +76,7 @@ def Run():
             Agent1Manager.Start(True, commands['cam_port2'])
         else:
             Agent1Manager.Start(False, None)
-        if commands['activate_agent3'] == True:
+        #if commands['activate_agent3'] == True:
             
 
         Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light1'], commands['light2'])
