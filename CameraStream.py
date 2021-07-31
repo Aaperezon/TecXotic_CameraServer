@@ -18,19 +18,20 @@ class CameraStream:
         self.pipeline = ""
         self.cap = None
     def SaveCameraPort(self,new_device, new_port):
-	    if self.camera_port == new_port and self.camera_index == new_device:
-		    return
-	    camera_settings_read_file = open('./Source/CameraSettings.json', "r")
-	    camera_settings_read = json.loads(camera_settings_read_file.read())
-	    camera_settings_read_file.close()
-	    self.camera_index = new_device
-	    camera_settings_read[str(self.camera_index)] = new_port
-	    camera_settings_write_file = open('./Source/CameraSettings.json',"w")
-	    json.dump(camera_settings_read, camera_settings_write_file)
-	    camera_settings_write_file.close()
-	    self.camera_port = new_port
-	    self.EndStream()
-	    self.Run()
+        print(f"index {new_device} port {new_port}")
+        if self.camera_port == new_port and self.camera_index == new_device:
+            return
+        self.camera_index = new_device
+        camera_settings_read_file = open('./Source/CameraSettings.json', "r")
+        camera_settings_read = json.loads(camera_settings_read_file.read())
+        camera_settings_read_file.close()
+        camera_settings_read[str(self.camera_index)] = new_port
+        camera_settings_write_file = open('./Source/CameraSettings.json',"w")
+        json.dump(camera_settings_read, camera_settings_write_file)
+        camera_settings_write_file.close()
+        self.camera_port = new_port
+        self.EndStream()
+        self.Run()
     def LoadCameraPort(self):
 	    PATH = ("./Source/CameraSettings.json")
 	    if not os.path.isfile(PATH):

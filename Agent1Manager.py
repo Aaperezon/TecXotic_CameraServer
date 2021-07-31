@@ -1,7 +1,7 @@
 import Agent1Test
 import PID
 import cv2 as cv
-
+#import LightsManager
 a = 2
 kP_throttle = a
 kI_throttle = 0
@@ -97,7 +97,7 @@ def Start(activate, port):
                 cap.release()
                 cv.destroyAllWindows()
     else:
-        cap = False
+        cap = None
 
 
 
@@ -108,19 +108,19 @@ def Start(activate, port):
 
  
 if __name__ == "__main__":
-	try:
-		cap = cv.VideoCapture(2)
-		
-		while True:
-			if cap.isOpened():
-				ret, frame = cap.read()
-				frame = cv.resize(frame, (640,480))
-				Start(True, frame)
-				if cv.waitKey(25) & 0xFF == ord('q'):
-					break
-		cap.release()
-		cv.destroyAllWindows()
-	except:
-		cap.release()
-		cv.destroyAllWindows()
-		camera.EndStream()
+    try:
+        cap = cv.VideoCapture(0)
+        #LightsManager.GetLight1().Switch(1)
+        while True:
+	        if cap.isOpened():
+		        ret, frame = cap.read()
+		        frame = cv.resize(frame, (640,480))
+		        Start(True, frame)
+		        if cv.waitKey(25) & 0xFF == ord('q'):
+			        break
+        cap.release()
+        cv.destroyAllWindows()
+    except:
+	    cap.release()
+	    cv.destroyAllWindows()
+	    camera.EndStream()

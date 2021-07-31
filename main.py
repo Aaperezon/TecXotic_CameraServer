@@ -58,7 +58,6 @@ def UtilityControl(pitch_camera,yaw_camera,miniROV_direction,reel_direction,cam_
 	MoveReel(reel_direction)
 	
 	
-pipeline = "udpsrc port=7896 ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink"
 
 def Run():
     global pixhawk_status,setup
@@ -74,13 +73,15 @@ def Run():
             Agent1Manager.SetRoll(4, 3,1,0)
             Agent1Manager.SetPitch(4, 3,1,0)
             Agent1Manager.SetYaw(4, 3,1,0)
-            Agent1Manager.Start(True, commands['cam_port1'])
-              
-        if commands['activate_agent1'] == False and commands['activate_agent2'] == False and commands['activate_agent3'] == False:
+            Agent1Manager.Start(True, commands['cam_port2'])
+        else:
             Agent1Manager.Start(False, None)
-            Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light1'], commands['light2'])
-            UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['reel_direction'],commands['cam_port1'],commands['cam_port2'])
-	        #hum, temp = GetHumidityTemperature()
+        if commands['activate_agent3'] == True:
+            
+
+        Control(commands['arm_disarm'],commands['roll'],commands['pitch'],commands['yaw'],commands['throttle'], commands['flight_mode'], commands['connect_pixhawk'], commands['r_LED'],commands['g_LED'],commands['b_LED'],commands['light1'], commands['light2'])
+        UtilityControl(commands['pitch_camera'],commands['yaw_camera'], commands['miniROV_direction'],commands['reel_direction'],commands['cam_port1'],commands['cam_port2'])
+        #hum, temp = GetHumidityTemperature()
         
         
         hum, temp = (0,0)

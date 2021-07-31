@@ -10,28 +10,29 @@ def Start(frame):
     #frame = cv.imread('./test_line1.png')  #Single image, already cropped
     frame = cv.GaussianBlur(frame,(5,5),0)
     hsvImg = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
-    #cv.imshow("HSV Image",hsvImg)
+    cv.imshow("HSV Image",hsvImg)
     hsvImg = hsvImg[:,:,1]
 
-    #cv.imshow("one channel",hsvImg)
+    cv.imshow("one channel",hsvImg)
 
-    hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_OCEAN)
+    #hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_OCEAN)
+    hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_HSV)
     cv.imshow("ocean colormap",hsvImg)
-    hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
+    #hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
     #cv.imshow("color for mask",hsvImg)
 
-    color_low = np.array([0,0,193], np.uint8)
+    color_low = np.array([0,0,10], np.uint8)
     color_high = np.array([180,190,250], np.uint8)
     hsvImg = cv.inRange(hsvImg, color_low,color_high)
-    #cv.imshow("white mask",hsvImg)
+    cv.imshow("white mask",hsvImg)
     kernel = np.ones((3,3), np.uint8)
-    hsvImg = cv.erode(hsvImg, kernel, iterations=1)
-    #cv.imshow("erode",hsvImg)
+    hsvImg = cv.dilate(hsvImg, kernel, iterations=4)
+    cv.imshow("erode",hsvImg)
 
-    edged = cv.Canny(hsvImg,threshold1=150, threshold2=200)
+    edged = cv.Canny(hsvImg,threshold1=0, threshold2=0)
     cv.imshow("Edged",edged)
 
-    lines = cv.HoughLines(edged, rho=1, theta=np.pi/180, threshold=70, lines=None,srn=0,stn=0)
+    lines = cv.HoughLines(edged, rho=1, theta=np.pi/180, threshold=40, lines=None,srn=0,stn=0)
     line1 = None
     line2 = None
     if lines is not None:
@@ -101,7 +102,7 @@ def Start(frame):
 
         print(f" throttle: {throttle}, roll: {roll}, pitch: constant, yaw: {yaw}")
 
-    #cv.imshow('lines',frame)
+    cv.imshow('lines',frame)
     return throttle, roll, pitch, yaw
 
 
