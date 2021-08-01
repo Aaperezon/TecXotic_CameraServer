@@ -9,20 +9,25 @@ def Start(frame):
     global throttle, roll, pitch, yaw
     #frame = cv.imread('./test_line1.png')  #Single image, already cropped
     frame = cv.GaussianBlur(frame,(5,5),0)
-    hsvImg = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+    #hsvImg = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+    hsvImg = frame
     cv.imshow("HSV Image",hsvImg)
-    hsvImg = hsvImg[:,:,1]
+    hsvImg = hsvImg[:,:,2]
 
     cv.imshow("one channel",hsvImg)
 
+
     hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_OCEAN)
-    hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
+    cv.imshow("ocean c1",hsvImg)
+    hsvImg = cv.applyColorMap(hsvImg, cv.COLORMAP_HSV)
+    #hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
+
     cv.imshow("ocean colormap",hsvImg)
     #hsvImg = cv.cvtColor(hsvImg, cv.COLOR_BGR2HSV)
     #cv.imshow("color for mask",hsvImg)
 
     color_low = np.array([0,40,0], np.uint8)
-    color_high = np.array([180,85,255], np.uint8)
+    color_high = np.array([180,50,255], np.uint8)
     result = cv.inRange(hsvImg, color_low,color_high)
     cv.imshow("first mask",result)
 
@@ -33,7 +38,7 @@ def Start(frame):
     edged = cv.Canny(result,threshold1=0, threshold2=0)
     cv.imshow("Edged",edged)
 
-    lines = cv.HoughLines(edged, rho=1, theta=np.pi/180, threshold=80, lines=None,srn=0,stn=0)
+    lines = cv.HoughLines(edged, rho=1, theta=np.pi/180, threshold=50, lines=None,srn=0,stn=0)
     line1 = None
     line2 = None
     if lines is not None:
@@ -104,7 +109,7 @@ def Start(frame):
         print(f" throttle: {throttle}, roll: {roll}, pitch: constant, yaw: {yaw}")
 
     cv.imshow('lines',frame)
-    return throttle, roll, 100, yaw
+    return throttle, roll, 20, yaw
 
 
 

@@ -75,10 +75,11 @@ def SetYaw(kP, kI, kD, target):
 cap = None
 def Start(activate, port):
     global cap
+    throttle = roll = pitch = yaw = 0
     if activate == True:
         if cap == None:
-            #cap = cv.VideoCapture("udpsrc port="+str(port)+" ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
-            cap = cv.VideoCapture("prueba2.wmv")
+            cap = cv.VideoCapture("udpsrc port="+str(port)+" ! application/x-rtp,encodingname=JPEG,payload=26 ! rtpjpegdepay ! jpegdec ! decodebin ! videoconvert ! appsink", cv.CAP_GSTREAMER)
+            #cap = cv.VideoCapture("prueba2.wmv")
         if cap.isOpened():
             ret,frame = cap.read()
             frame = cv.resize(frame, (320,240))
@@ -87,6 +88,10 @@ def Start(activate, port):
             pid_roll.update(roll)
             pid_pitch.update(pitch)
             pid_yaw.update(yaw)
+            throttle = pid_throttle.output
+            roll = pid_roll.output
+            pitch = pid_pitch.output
+            yaw = pid_yaw.output
             print(f"""
             throttle:  { pid_throttle.output - 500}
             roll: { pid_roll.output }
@@ -99,7 +104,7 @@ def Start(activate, port):
     else:
         cap = None
 
-
+    return int(throttle), int(roll), int(pitch), int(yaw)
 
 
 
@@ -109,7 +114,7 @@ def Start(activate, port):
  
 if __name__ == "__main__":
     try:
-        cap = cv.VideoCapture("prueba2.wmv")
+        #cap = cv.VideoCapture("prueba2.wmv")
 
         #LightsManager.GetLight1().Switch(1)
         while True:
