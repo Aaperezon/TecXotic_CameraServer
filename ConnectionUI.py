@@ -1,9 +1,8 @@
 import socket
 import json
-import  LightsManager
-TCP_IP = '192.168.2.2'
+TCP_IP = '127.0.0.1'
 TCP_PORT = 55000
-BUFFER_SIZE = 4096  # Normally 1024, but we want fast response
+BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((TCP_IP, TCP_PORT))
@@ -15,7 +14,6 @@ conectionAllowed = False
 conn = None
 addr = None
 
-UI_indicator_LED = False
 def ConnectTo():
 	global conn,addr,conectionAllowed
 	conn, addr = s.accept()
@@ -24,15 +22,15 @@ def ConnectTo():
 	print ("Connection success...")
 	
 def Receive():
-	global conectionAllowed,UI_indicator_LED
+	global conectionAllowed
 	if(conectionAllowed == True):
 		received = conn.recv(BUFFER_SIZE)
 		if not received: 
-			print("Error de datos")
+			print("Data error...")
 			conn.close()
 			conectionAllowed = False
-			UI_indicator_LED = False
 		try:
+			print(f"Real Received {received}")
 			received = received.decode("utf-8")
 			received = "{}".format(received)
 			received = json.loads(received)
@@ -42,10 +40,6 @@ def Receive():
 			pass
 	else:
 		print("Waiting for client...")
-		if UI_indicator_LED == False:
-			LightsManager.KillLightsThread()
-			LightsManager.AssignThread(LightsManager.WarningConnectionUI)
-			UI_indicator_LED = True
 		ConnectTo()
 	
 def CloseConnection():
@@ -54,7 +48,6 @@ def CloseConnection():
 		conn.close()
 	except Exception as e: 
 		print(e)
-
 	print("Closed connection...")
 
 def Send(data):
@@ -63,3 +56,22 @@ def Send(data):
 			conn.sendall(data)
 		except Exception as e:
 			print(e)	
+
+
+
+if __name__ == "__main__":
+	try:
+		print("Running...")
+		while True:
+			commands = Receive()
+			if commands != None:
+				print("Received")
+				print(str(commands))
+			else:
+				print("No commands")
+	except KeyboardInterrupt:
+		CloseConnection()
+	except Exception as e:
+		print(e)
+
+      
